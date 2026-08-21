@@ -1,0 +1,150 @@
+{
+  "name": "Pole Network Event Router",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "esp-32",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Webhook (ESP-32)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "poleId", "name": "poleId", "value": "={{$json.body.source}}", "type": "string" },
+            { "id": "path", "name": "path", "value": "={{$json.body.path}}", "type": "string" },
+            { "id": "destination", "name": "destination", "value": "={{$json.body.destination}}", "type": "string" },
+            { "id": "rawData", "name": "rawData", "value": "={{$json.body.data}}", "type": "string" },
+            { "id": "receivedAt", "name": "receivedAt", "value": "={{$now.toISO()}}", "type": "string" }
+          ]
+        }
+      },
+      "name": "Normalize Payload",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{$json.rawData}}",
+        "rules": {
+          "rules": [
+            { "operation": "equal", "value2": "SOS", "output": 0 },
+            { "operation": "startsWith", "value2": "UID:", "output": 1 }
+          ]
+        },
+        "fallbackOutput": 2
+      },
+      "name": "Classify Event",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "type", "name": "type", "value": "SOS", "type": "string" }
+          ]
+        }
+      },
+      "name": "Set Type SOS",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "type", "name": "type", "value": "CHECKIN_PENDING", "type": "string" }
+          ]
+        }
+      },
+      "name": "Set Type Card",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "type", "name": "type", "value": "MESSAGE", "type": "string" }
+          ]
+        }
+      },
+      "name": "Set Type Message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [850, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.BACKEND_URL || 'http://localhost:4000'}}/api/events",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "nexttrack_device_secret_key_9988" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"poleId\": \"{{$json.poleId}}\",\n  \"path\": \"{{$json.path}}\",\n  \"destination\": \"{{$json.destination}}\",\n  \"type\": \"{{$json.type}}\",\n  \"rawData\": \"{{$json.rawData}}\",\n  \"receivedAt\": \"{{$json.receivedAt}}\"\n}",
+        "options": {
+          "continueOnFail": true
+        }
+      },
+      "name": "Forward to NextTrack Backend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1080, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"ok\": true}",
+        "options": {}
+      },
+      "name": "Respond 200 OK to ESP32",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1300, 300]
+    }
+  ],
+  "connections": {
+    "Webhook (ESP-32)": {
+      "main": [[{ "node": "Normalize Payload", "type": "main", "index": 0 }]]
+    },
+    "Normalize Payload": {
+      "main": [[{ "node": "Classify Event", "type": "main", "index": 0 }]]
+    },
+    "Classify Event": {
+      "main": [
+        [{ "node": "Set Type SOS", "type": "main", "index": 0 }],
+        [{ "node": "Set Type Card", "type": "main", "index": 0 }],
+        [{ "node": "Set Type Message", "type": "main", "index": 0 }]
+      ]
+    },
+    "Set Type SOS": {
+      "main": [[{ "node": "Forward to NextTrack Backend", "type": "main", "index": 0 }]]
+    },
+    "Set Type Card": {
+      "main": [[{ "node": "Forward to NextTrack Backend", "type": "main", "index": 0 }]]
+    },
+    "Set Type Message": {
+      "main": [[{ "node": "Forward to NextTrack Backend", "type": "main", "index": 0 }]]
+    },
+    "Forward to NextTrack Backend": {
+      "main": [[{ "node": "Respond 200 OK to ESP32", "type": "main", "index": 0 }]]
+    }
+  }
+}

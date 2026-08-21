@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # Official Local MongoDB Database Service
+  mongo:
+    image: mongo:7.0
+    container_name: nexttrack-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  # NextTrack MERN Backend Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nexttrack-backend
+    restart: always
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongo:27017/nexttrack
+      - JWT_SECRET=nexttrack_secret_jwt_key_2026_super_secure
+      - DEVICE_API_KEY=nexttrack_device_secret_key_9988
+      - CORS_ORIGIN=*
+    depends_on:
+      - mongo
+
+  # NextTrack React Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nexttrack-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_NODE_ENV=development
+      - VITE_API_URL=http://localhost:4000/api
+      - VITE_SOCKET_URL=http://localhost:4000
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
