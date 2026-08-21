@@ -12,14 +12,23 @@
 
 ### Command Center Interface Showcase
 
-![NextTrack Command Dashboard Preview](./assets/dashboard_preview.png)
-![NextTrack Emergency SOS Alert Preview](./assets/sos_alert_preview.png)
+<p align="center">
+  <img src="./assets/image.png" alt="NextTrack Command Dashboard Preview" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./assets/analytics.png" alt="NextTrack Analytics Interface" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./assets/log.png" alt="NextTrack Log Audit" width="100%" />
+</p>
 
 ### 🎬 System Demonstration Video
 
-[![Google Drive - Watch Demo Video](https://img.shields.io/badge/Google%20Drive-Watch%20Demo%20Video-4285F4?style=for-the-badge&logo=googledrive&logoColor=white)](https://drive.google.com/file/d/YOUR_GDRIVE_FILE_ID/view)
+[![Google Drive - Watch Demo Video](https://img.shields.io/badge/Google%20Drive-Watch%20Demo%20Video-4285F4?style=for-the-badge&logo=googledrive&logoColor=white)](https://drive.google.com/file/d/1buubhD8N7Kw7-bqaH16bhFKItizndD93/view?usp=sharing)
 
-> 🎥 **[Watch NextTrack System Demonstration Video (Google Drive)](https://drive.google.com/file/d/YOUR_GDRIVE_FILE_ID/view)**
+> 🎥 **[Watch NextTrack System Demonstration Video (Google Drive)](https://drive.google.com/file/d/1buubhD8N7Kw7-bqaH16bhFKItizndD93/view?usp=sharing)**
 > 
 > *Walkthrough covering real-time ESP32 LoRa packet routing, instant acoustic SOS emergency dispatch, physical NFC card tap resolution, and dynamic CSV/Excel log compliance exports.*
 
