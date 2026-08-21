@@ -38,6 +38,7 @@ app.use(
       return callback(null, true); // Permissive fallback for production cloud deployments
     },
     credentials: true,
+    exposedHeaders: ['Content-Disposition'],
   })
 );
 

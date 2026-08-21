@@ -1,33 +1,14 @@
 import React, { useState } from 'react';
 import { Settings, Key, Volume2, ShieldCheck, Database, Server } from 'lucide-react';
+import { playAlertChime } from '../utils/audio';
 
 export const SettingsPage = ({ audioEnabled, setAudioEnabled }) => {
   const [testingSound, setTestingSound] = useState(false);
 
   const testAudioChime = () => {
     setTestingSound(true);
-    try {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.5);
-
-      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.5);
-    } catch (e) {
-      console.warn('Audio play failed', e);
-    } finally {
-      setTimeout(() => setTestingSound(false), 600);
-    }
+    playAlertChime();
+    setTimeout(() => setTestingSound(false), 500);
   };
 
   return (

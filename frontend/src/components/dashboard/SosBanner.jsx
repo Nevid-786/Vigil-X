@@ -1,31 +1,12 @@
 import React, { useEffect } from 'react';
 import { ShieldAlert, CheckCircle, Navigation, Clock, Radio } from 'lucide-react';
 import { eventsService } from '../../api/services';
+import { playAlertChime } from '../../utils/audio';
 
 export const SosBanner = ({ activeSos, onAcknowledge, audioEnabled }) => {
   useEffect(() => {
     if (!activeSos || !audioEnabled) return;
-
-    try {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(880, audioCtx.currentTime); // A5
-      osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.6);
-
-      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.6);
-    } catch (e) {
-      console.warn('Audio chime play blocked', e);
-    }
+    playAlertChime();
   }, [activeSos, audioEnabled]);
 
   if (!activeSos) return null;

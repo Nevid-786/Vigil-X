@@ -9,8 +9,10 @@ export const eventsService = {
   getEvents: (params) => apiClient.get('/events', { params }),
   acknowledge: (id) => apiClient.patch(`/events/${id}/acknowledge`),
   triggerDemo: (data) => apiClient.post('/events/demo', data),
-  getExportUrl: (params) => {
-    const searchParams = new URLSearchParams(params);
+  exportEvents: (params, format = 'csv') =>
+    apiClient.get('/events/export', { params: { ...params, format }, responseType: 'blob' }),
+  getExportUrl: (params, format = 'csv') => {
+    const searchParams = new URLSearchParams({ ...params, format });
     return `/api/events/export?${searchParams.toString()}`;
   },
 };

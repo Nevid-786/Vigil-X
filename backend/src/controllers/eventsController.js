@@ -105,7 +105,11 @@ export const getEvents = async (req, res) => {
     if (from || to) {
       filter.receivedAt = {};
       if (from) filter.receivedAt.$gte = new Date(from);
-      if (to) filter.receivedAt.$lte = new Date(to);
+      if (to) {
+        const toDate = new Date(to);
+        toDate.setHours(23, 59, 59, 999);
+        filter.receivedAt.$lte = toDate;
+      }
     }
 
     const pageNum = parseInt(page, 10) || 1;
@@ -134,7 +138,7 @@ export const getEvents = async (req, res) => {
  */
 export const exportEventsCSV = async (req, res) => {
   try {
-    const { type, poleId, from, to } = req.query;
+    const { type, poleId, from, to, format = 'csv' } = req.query;
 
     const filter = {};
     if (type) filter.type = type;
@@ -142,10 +146,81 @@ export const exportEventsCSV = async (req, res) => {
     if (from || to) {
       filter.receivedAt = {};
       if (from) filter.receivedAt.$gte = new Date(from);
-      if (to) filter.receivedAt.$lte = new Date(to);
+      if (to) {
+        const toDate = new Date(to);
+        toDate.setHours(23, 59, 59, 999);
+        filter.receivedAt.$lte = toDate;
+      }
     }
 
     const events = await Event.find(filter).sort({ receivedAt: -1 }).limit(2000);
+
+    if (format === 'excel' || format === 'xlsx' || format === 'xls') {
+      let html = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  th { background-color: #4f46e5; color: #ffffff; font-weight: bold; border: 1px solid #3730a3; text-align: left; padding: 8px; }
+  td { border: 1px solid #cbd5e1; padding: 6px; font-family: monospace; font-size: 12px; }
+  .sos { background-color: #ffe4e6; color: #9f1239; font-weight: bold; }
+  .checkin { background-color: #dcfce7; color: #166534; }
+  .unknown { background-color: #fef3c7; color: #92400e; }
+  .message { background-color: #e0e7ff; color: #3730a3; }
+</style>
+</head>
+<body>
+<h2>NextTrack Telemetry Event Audit Log</h2>
+<table border="1">
+<thead>
+  <tr>
+    <th>Event ID</th>
+    <th>Pole ID</th>
+    <th>Path</th>
+    <th>Type</th>
+    <th>Raw Data</th>
+    <th>Normalized UID</th>
+    <th>Resolved Name</th>
+    <th>Received At</th>
+    <th>Acknowledged At</th>
+  </tr>
+</thead>
+<tbody>`;
+
+      events.forEach((e) => {
+        let typeClass = '';
+        if (e.type === 'SOS') typeClass = 'sos';
+        else if (e.type === 'CHECKIN') typeClass = 'checkin';
+        else if (e.type === 'UNKNOWN_CARD') typeClass = 'unknown';
+        else if (e.type === 'MESSAGE') typeClass = 'message';
+
+        const safeRawData = (e.rawData || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const safeResolvedName = (e.resolvedName || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+        html += `
+  <tr class="${typeClass}">
+    <td>${e._id}</td>
+    <td>${e.poleId || ''}</td>
+    <td>${e.path || ''}</td>
+    <td>${e.type || ''}</td>
+    <td>${safeRawData}</td>
+    <td>${e.normalizedUid || ''}</td>
+    <td>${safeResolvedName}</td>
+    <td>${e.receivedAt ? e.receivedAt.toISOString() : ''}</td>
+    <td>${e.acknowledgedAt ? e.acknowledgedAt.toISOString() : ''}</td>
+  </tr>`;
+      });
+
+      html += `
+</tbody>
+</table>
+</body>
+</html>`;
+
+      res.setHeader('Content-Type', 'application/vnd.ms-excel');
+      res.setHeader('Content-Disposition', `attachment; filename=nexttrack_events_${Date.now()}.xls`);
+      return res.status(200).send(html);
+    }
 
     let csv = 'Event ID,Pole ID,Path,Type,Raw Data,Normalized UID,Resolved Name,Received At,Acknowledged At\n';
 
