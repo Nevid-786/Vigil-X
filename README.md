@@ -8,7 +8,20 @@
 [![MongoDB](https://img.shields.io/badge/MongoDB-7.0-47A248.svg)](https://www.mongodb.com)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](https://www.docker.com)
 
-> **Enterprise ESP32 LoRa Mesh Telemetry Router, Emergency Response & Attendance Management System**
+## Application Interface & System Demo
+
+### Command Center Interface Showcase
+
+![NextTrack Command Dashboard Preview](./assets/dashboard_preview.png)
+![NextTrack Emergency SOS Alert Preview](./assets/sos_alert_preview.png)
+
+### 🎬 System Demonstration Video
+
+[![Google Drive - Watch Demo Video](https://img.shields.io/badge/Google%20Drive-Watch%20Demo%20Video-4285F4?style=for-the-badge&logo=googledrive&logoColor=white)](https://drive.google.com/file/d/YOUR_GDRIVE_FILE_ID/view)
+
+> 🎥 **[Watch NextTrack System Demonstration Video (Google Drive)](https://drive.google.com/file/d/YOUR_GDRIVE_FILE_ID/view)**
+> 
+> *Walkthrough covering real-time ESP32 LoRa packet routing, instant acoustic SOS emergency dispatch, physical NFC card tap resolution, and dynamic CSV/Excel log compliance exports.*
 
 NextTrack is a full-stack real-time telemetry monitoring and management platform designed to ingest, process, resolve, and audit event streams emitted across distributed ESP32 LoRa mesh networks.
 
