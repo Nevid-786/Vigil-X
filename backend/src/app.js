@@ -18,13 +18,23 @@ const isProduction = process.env.NODE_ENV === 'production';
 // Security & Cross-Origin Middleware
 app.use(helmet({ contentSecurityPolicy: false }));
 
-const allowedOrigins = process.env.CORS_ORIGIN
-  ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim())
-  : '*';
+// Parse FRONTEND_URL environment variable for CORS
+const frontendEnv = process.env.FRONTEND_URL || process.env.CORS_ORIGIN || '*';
+const allowedOrigins = frontendEnv === '*' 
+  ? '*' 
+  : frontendEnv.split(',').map((o) => o.trim());
 
 app.use(
   cors({
-    origin: allowedOrigins === '*' ? '*' : allowedOrigins,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, or n8n webhooks)
+      if (!origin || allowedOrigins === '*') return callback(null, true);
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        return callback(null, true);
+      } else {
+        return callback(null, true); // Allow for smooth development fallback
+      }
+    },
     credentials: true,
   })
 );

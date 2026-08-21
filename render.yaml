@@ -15,5 +15,7 @@ services:
         generateValue: true
       - key: DEVICE_API_KEY
         generateValue: true
+      - key: FRONTEND_URL
+        value: "https://nexttrack.vercel.app"
       - key: CORS_ORIGIN
         value: "*"

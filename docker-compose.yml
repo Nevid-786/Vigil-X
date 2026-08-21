@@ -26,6 +26,7 @@ services:
       - MONGODB_URI=mongodb://mongo:27017/nexttrack
       - JWT_SECRET=nexttrack_secret_jwt_key_2026_super_secure
       - DEVICE_API_KEY=nexttrack_device_secret_key_9988
+      - FRONTEND_URL=http://localhost:3000,http://127.0.0.1:3000
       - CORS_ORIGIN=*
     depends_on:
       - mongo
