@@ -1,4 +1,4 @@
-# NextTrack Command Center
+# Vigil-X Command Center
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https.mit-license.org)
 [![Node.js](https://img.shields.io/badge/Node.js-v18%2B-green.svg)](https://nodejs.org)
@@ -7,6 +7,7 @@
 [![Express](https://img.shields.io/badge/Express-4.19-000000.svg)](https://expressjs.com)
 [![MongoDB](https://img.shields.io/badge/MongoDB-7.0-47A248.svg)](https://www.mongodb.com)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](https://www.docker.com)
+<!--- 
 
 ## Application Interface & System Demo
 
@@ -36,7 +37,7 @@ NextTrack is a full-stack real-time telemetry monitoring and management platform
 
 It provides immediate sub-second visual and acoustic dispatch alerts for critical SOS emergencies, automates NFC cardholder check-in resolution, maintains historical audit compliance logs with multi-format export capabilities (CSV/Excel), and exposes real-time WebSocket state distribution to operational command personnel.
 
----
+------>
 
 ## Table of Contents
 
